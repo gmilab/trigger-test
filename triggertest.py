@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QTimer
+import sys
 
 import enum
 
@@ -30,13 +31,14 @@ class CLASGUI(QtWidgets.QMainWindow):
         self.btn_sequence.clicked.connect(self.triggertest_start)
         self.btn_stop.clicked.connect(self.triggertest_stop)
         self.btn_max.clicked.connect(self.triggertest_max)
+        self.btn_specific.clicked.connect(self.triggertest_sendsingle)
 
         # serial port
         # self.port = serial.Serial('COM7', baudrate=9600)
         # self.port_type = PortType.SERIAL
 
         # parallel port
-        self.port = parallel.ParallelPort(address=0x3ff8)
+        self.port = parallel.ParallelPort(address=0x4ff8)
         self.port_type = PortType.PARALLEL
 
         ### Show figure ###
@@ -108,3 +110,8 @@ class CLASGUI(QtWidgets.QMainWindow):
             raise(ValueError('Invalid port type'))
 
         self.lbl_status.setText('Sent {:d}'.format(value))
+
+if __name__ == "__main__":
+    App = QtWidgets.QApplication(sys.argv)
+    window = CLASGUI()
+    sys.exit(App.exec())
