@@ -1,0 +1,8 @@
+# uncomment below for serial port / Neurospec MMTB box
+# serial:
+#   port: COM7
+#   baud: 9600
+
+# uncomment below for parallel port
+parallel:
+  address: 0x4ff8

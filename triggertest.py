@@ -1,15 +1,11 @@
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QTimer
-import sys
 
+import sys
 import enum
 
-# serial port
-# import serial
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import QTimer
 
-# parallel port
-from psychopy import parallel
-
+import yaml
 
 class PortType(enum.Enum):
     SERIAL = 0
@@ -33,13 +29,28 @@ class CLASGUI(QtWidgets.QMainWindow):
         self.btn_max.clicked.connect(self.triggertest_max)
         self.btn_specific.clicked.connect(self.triggertest_sendsingle)
 
-        # serial port
-        # self.port = serial.Serial('COM7', baudrate=9600)
-        # self.port_type = PortType.SERIAL
+        # load port config
+        with open('config.yaml', 'r') as f:
+            portconfig = yaml.safe_load(f)
 
-        # parallel port
-        self.port = parallel.ParallelPort(address=0x4ff8)
-        self.port_type = PortType.PARALLEL
+        if ('serial' in portconfig) and ('parallel' in portconfig):
+            raise(ValueError('Both serial and parallel ports specified'))
+        
+        elif 'serial' in portconfig:
+            import serial
+
+            self.port = serial.Serial(portconfig['serial']['port'],
+                                      baudrate=portconfig['serial']['baudrate'])
+            self.port_type = PortType.SERIAL
+
+        elif 'parallel' in portconfig:
+            from psychopy import parallel
+
+            self.port = parallel.ParallelPort(address=portconfig['parallel']['address'])
+            self.port_type = PortType.PARALLEL
+
+        else:
+            raise(ValueError('No port specified'))
 
         ### Show figure ###
         self.show()
