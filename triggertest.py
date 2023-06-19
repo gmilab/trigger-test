@@ -40,7 +40,7 @@ class CLASGUI(QtWidgets.QMainWindow):
             import serial
 
             self.port = serial.Serial(portconfig['serial']['port'],
-                                      baudrate=portconfig['serial']['baudrate'])
+                                      baudrate=portconfig['serial']['baud'])
             self.port_type = PortType.SERIAL
 
         elif 'parallel' in portconfig:
