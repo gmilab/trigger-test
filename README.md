@@ -14,3 +14,6 @@ pip install -r requirements.txt
 1. Uncomment serial port section of config.yaml
 1. Set the correct COM port
 
+## Background
+
+All our PsychoPy and Presentation experiments are configured to send triggers for time-locking. These can be time-locked to anything; in typical usage, when the computer presents an image, it will simultaneously toggle a pin on the trigger box. The trigger channels are +5V and are recorded simultaneously with whatever data (typically EEG). Then we can identify the precise sample in the EEG where the trigger channel went from 0V to 5V. This could be easily adapted for non-EEG data collection as well.
