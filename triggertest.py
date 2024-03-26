@@ -33,24 +33,54 @@ class CLASGUI(QtWidgets.QMainWindow):
         with open('config.yaml', 'r') as f:
             portconfig = yaml.safe_load(f)
 
-        if ('serial' in portconfig) and ('parallel' in portconfig):
-            raise(ValueError('Both serial and parallel ports specified'))
-        
-        elif 'serial' in portconfig:
-            import serial
+        # initialize the port
+        self.port = None
+        portstatus = 'Not Connected !!'
+        if ('output_port' in portconfig) and ('parallel' in portconfig['output_port']):
+            try:
+                # if parallel port is requested in portconfig, use that
+                from psychopy import parallel
+                self.port = parallel.ParallelPort(address=portconfig['output_port']['parallel']['address'])
 
-            self.port = serial.Serial(portconfig['serial']['port'],
-                                      baudrate=portconfig['serial']['baud'])
-            self.port_type = PortType.SERIAL
+                portstatus = f'OK. Parallel @ 0x{portconfig["output_port"]["parallel"]["address"]:x}'
+                self.port_type = PortType.PARALLEL
 
-        elif 'parallel' in portconfig:
-            from psychopy import parallel
+            except Exception as e:
+                print('Cannot initialize parallel port')
+                print(portconfig['output_port'])
 
-            self.port = parallel.ParallelPort(address=portconfig['parallel']['address'])
-            self.port_type = PortType.PARALLEL
+        if self.port is None:
+            try:
+                # else look for usb trigger interface
+                import serial
+                import serial.tools.list_ports
 
-        else:
-            raise(ValueError('No port specified'))
+                # find ports that match
+                comports = serial.tools.list_ports.comports()
+                comports = [p for p in comports if p.vid in [9025, 10755, 0x1a86]]
+
+                if len(comports) == 0:
+                    raise Exception('No matching ports found')
+
+                if len(comports) > 1:
+                    # use pick
+                    print('Multiple matching ports found. Please select one:')
+                    for i, p in enumerate(comports):
+                        print(f'{i}: {p.device} ({p.manufacturer})')
+                    port_idx = int(input('Enter port number: '))
+                    comports = [comports[port_idx]]
+
+                comstr = comports[0].device
+
+                print(f'Using port {comstr}. ' + comports[0].hwid)
+                self.port = serial.Serial(comstr, 9600)
+
+                portstatus = 'OK. Serial @ ' + comports[0].hwid
+                self.port_type = PortType.SERIAL
+
+            except Exception as e:
+                print('Cannot initialize serial port')
+                raise ValueError('No Port found')
 
         ### Show figure ###
         self.show()
