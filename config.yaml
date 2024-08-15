@@ -1,8 +1,5 @@
-# uncomment below for serial port / Neurospec MMTB box
-serial:
-  port: COM10
-  baud: 9600
-
 # uncomment below for parallel port
 # parallel:
 #   address: 0x4ff8
+
+# else, default is to look for a NeuroSpec MMBT-S serial port
