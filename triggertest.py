@@ -2,8 +2,9 @@
 import sys
 import enum
 
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QTimer
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 import yaml
 
@@ -12,7 +13,7 @@ class PortType(enum.Enum):
     PARALLEL = 1
 
 
-class CLASGUI(QtWidgets.QMainWindow):
+class CLASGUI(QMainWindow):
 
     triggertest_timer = None
     triggertest_state = 0
@@ -21,7 +22,8 @@ class CLASGUI(QtWidgets.QMainWindow):
         super().__init__()
 
         # load the UI
-        uic.loadUi('triggertest.ui', self)
+        self.setupUi(self)
+
 
         # bind buttons
         self.btn_sequence.clicked.connect(self.triggertest_start)
@@ -84,6 +86,48 @@ class CLASGUI(QtWidgets.QMainWindow):
 
         ### Show figure ###
         self.show()
+
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(422, 116)
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.btn_sequence = QPushButton(self.centralwidget)
+        self.btn_sequence.setObjectName(u"btn_sequence")
+        self.btn_sequence.setGeometry(QRect(20, 10, 121, 91))
+        self.btn_max = QPushButton(self.centralwidget)
+        self.btn_max.setObjectName(u"btn_max")
+        self.btn_max.setGeometry(QRect(150, 10, 121, 31))
+        self.btn_stop = QPushButton(self.centralwidget)
+        self.btn_stop.setObjectName(u"btn_stop")
+        self.btn_stop.setGeometry(QRect(300, 80, 111, 23))
+        self.btn_specific = QPushButton(self.centralwidget)
+        self.btn_specific.setObjectName(u"btn_specific")
+        self.btn_specific.setGeometry(QRect(150, 80, 121, 23))
+        self.txt_code = QLineEdit(self.centralwidget)
+        self.txt_code.setObjectName(u"txt_code")
+        self.txt_code.setGeometry(QRect(150, 60, 121, 20))
+        self.lbl_status = QLabel(self.centralwidget)
+        self.lbl_status.setObjectName(u"lbl_status")
+        self.lbl_status.setGeometry(QRect(306, 10, 101, 61))
+        self.lbl_status.setStyleSheet(u"border: 1px #000 solid; padding: 2px;")
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Trigger Test", None))
+        self.btn_sequence.setText(QCoreApplication.translate("MainWindow", u"Send sequence", None))
+        self.btn_max.setText(QCoreApplication.translate("MainWindow", u"Send 255", None))
+        self.btn_stop.setText(QCoreApplication.translate("MainWindow", u"Stop", None))
+        self.btn_specific.setText(QCoreApplication.translate("MainWindow", u"Send number", None))
+        self.lbl_status.setText(QCoreApplication.translate("MainWindow", u"Ready...", None))
+    # retranslateUi
+
 
     def triggertest_stop(self):
         # reset timer
@@ -153,6 +197,6 @@ class CLASGUI(QtWidgets.QMainWindow):
         self.lbl_status.setText('Sent {:d}'.format(value))
 
 if __name__ == "__main__":
-    App = QtWidgets.QApplication(sys.argv)
+    App = QApplication(sys.argv)
     window = CLASGUI()
     sys.exit(App.exec())
