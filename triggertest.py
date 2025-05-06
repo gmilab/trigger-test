@@ -38,7 +38,7 @@ class CLASGUI(QMainWindow):
         # initialize the port
         self.port = None
         portstatus = 'Not Connected !!'
-        if ('output_port' in portconfig) and ('parallel' in portconfig['output_port']):
+        if portconfig and ('output_port' in portconfig) and ('parallel' in portconfig['output_port']):
             try:
                 # if parallel port is requested in portconfig, use that
                 from psychopy import parallel
