@@ -199,4 +199,4 @@ class CLASGUI(QMainWindow):
 if __name__ == "__main__":
     App = QApplication(sys.argv)
     window = CLASGUI()
-    sys.exit(App.exec())
+    sys.exit(App.exec_())
