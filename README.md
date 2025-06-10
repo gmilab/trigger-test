@@ -3,7 +3,12 @@ Compatible with IEEE1284 parallel port in ECP mode or the Neurospec MMBT-S USB/s
 
 ## Installation
 ``` bash
-pip install -r requirements.txt
+uv sync
+```
+
+## Usage
+``` bash
+uv run .\run_triggertest.py
 ```
 
 ### Serial port mode
