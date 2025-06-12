@@ -31,7 +31,7 @@ class CLASGUI(QMainWindow):
         self.btn_stop.clicked.connect(self.triggertest_stop)
         self.btn_max.clicked.connect(self.triggertest_max)
         self.btn_specific.clicked.connect(self.triggertest_sendsingle)
-        self.btn_10triggers.clicked.connect(self.triggertest_start)
+        self.btn_10triggers.clicked.connect(self.start_10_triggers_every_2min)
 
         # load port config
         with open('config.yaml', 'r') as f:
