@@ -203,14 +203,19 @@ class CLASGUI(QMainWindow):
         self.lbl_status.setText('Sent {:d}'.format(value))
 
     def start_10_triggers_every_2min(self):
-        """Start sending a burst of 10 triggers (1s apart) every 2 minutes."""
-        self.burst_timer = QTimer(self)
-        self.burst_timer.timeout.connect(self.start_trigger_burst)
-        self.burst_timer.start(2 * 60 * 1000)  # 2 minutes in ms
+    # Only create the burst_timer once
+        if not hasattr(self, 'burst_timer') or self.burst_timer is None:
+            self.burst_timer = QTimer(self)
+            self.burst_timer.timeout.connect(self.start_trigger_burst)
+            self.burst_timer.start(2 * 60 * 1000)  # 2 minutes in ms
         self.start_trigger_burst()  # Start immediately
 
     def start_trigger_burst(self):
         """Start sending 10 triggers, 1s apart."""
+        # Stop any previous burst in progress
+        if hasattr(self, 'burst_trigger_timer') and self.burst_trigger_timer is not None:
+            self.burst_trigger_timer.stop()
+            self.burst_trigger_timer = None
         self.triggers_sent_in_burst = 0
         self.burst_trigger_timer = QTimer(self)
         self.burst_trigger_timer.timeout.connect(self.send_burst_trigger)
@@ -224,7 +229,9 @@ class CLASGUI(QMainWindow):
             self.triggers_sent_in_burst += 1
             self.lbl_status.setText(f'Burst: Sent {self.triggers_sent_in_burst}/10')
         else:
-            self.burst_trigger_timer.stop()
+            if self.burst_trigger_timer is not None:
+                self.burst_trigger_timer.stop()
+                self.burst_trigger_timer = None
             self.lbl_status.setText('Burst done, waiting 2 min...')
         
 
