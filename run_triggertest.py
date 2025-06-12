@@ -228,7 +228,7 @@ class CLASGUI(QMainWindow):
     def send_burst_trigger(self):
         """Send one trigger in the burst, stop after 10."""
         if self.triggers_sent_in_burst < 10:
-            self.send_trigger(255)  # Or any value you want
+            self.send_trigger(1)  # Or any value you want
             self.triggers_sent_in_burst += 1
             self.lbl_status.setText(f'Burst: Sent {self.triggers_sent_in_burst}/10')
         else:
