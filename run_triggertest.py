@@ -210,7 +210,7 @@ class CLASGUI(QMainWindow):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
             self.burst_timer = QTimer(self)
             self.burst_timer.timeout.connect(self.start_trigger_burst)
-            self.burst_timer.start(110 * 1000)  # 110 seconds in ms
+            self.burst_timer.start(120 * 1000)  # 110 seconds in ms
         self.start_trigger_burst()  # Start first burst immediately
 
     def start_trigger_burst(self):
