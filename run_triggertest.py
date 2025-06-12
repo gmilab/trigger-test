@@ -245,7 +245,7 @@ class CLASGUI(QMainWindow):
     def update_burst_countdown(self):
         self.burst_countdown -= 1
         if self.burst_countdown > 0:
-            self.lbl_status.setText(f'Burst done, next{self.burst_countdown}s...')
+            self.lbl_status.setText(f'Next burst: {self.burst_countdown}s...')
         else:
             self.burst_countdown_timer.stop()
             self.lbl_status.setText('Starting next burst soon...')
