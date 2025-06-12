@@ -206,7 +206,7 @@ class CLASGUI(QMainWindow):
         self.triggertest_state = 0
         self.triggertest_timer = QTimer(self)
         self.triggertest_timer.timeout.connect(self.send_next_trigger_in_sequence)
-        self.triggertest_timer.start(12000)  # 120 seconds / 10 = 12 seconds between triggers
+        self.triggertest_timer.start(1200)  # 120 seconds / 10 = 12 seconds between triggers
 
     def send_next_trigger_in_sequence(self):
         if self.triggertest_state >= 10:
@@ -217,8 +217,6 @@ class CLASGUI(QMainWindow):
 
         self.send_trigger(1)  # You can replace 1 with another desired trigger value
         self.triggertest_state += 1
-
-        
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)
