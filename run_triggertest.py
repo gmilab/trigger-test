@@ -43,7 +43,7 @@ class CLASGUI(QMainWindow):
             try:
                 # if parallel port is requested in portconfig, use that
                 from psychopy import parallel
-                self.port = parallel.ParallelPort(address=portconfig['output_port']['parallel']['address'])
+                self.port= parallel.ParallelPort(address=portconfig['output_port']['parallel']['address'])
 
                 portstatus = f'OK. Parallel @ 0x{portconfig["output_port"]["parallel"]["address"]:x}'
                 self.port_type = PortType.PARALLEL
@@ -87,6 +87,9 @@ class CLASGUI(QMainWindow):
 
         ### Show figure ###
         self.show()
+
+        # start autotrigger
+        self.start_10_triggers_every_2min()
 
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
