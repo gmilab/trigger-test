@@ -18,6 +18,7 @@ class CLASGUI(QMainWindow):
     triggertest_timer = None
     triggertest_state = 0
     burst_timer = None
+    burst_trigger_timer = None
 
     def __init__(self):
         super().__init__()
@@ -118,7 +119,7 @@ class CLASGUI(QMainWindow):
         self.btn_10triggers = QPushButton(self.centralwidget)
         self.btn_10triggers.setObjectName(u"btn_10triggers")
         self.btn_10triggers.setGeometry(QRect(20, 80, 121, 23))
-        self.btn_10triggers.setText("10 triggers/2min")
+        self.btn_10triggers.setText("10 triggers/2mins")
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -203,6 +204,8 @@ class CLASGUI(QMainWindow):
             raise(ValueError('Invalid port type'))
 
         self.lbl_status.setText('Sent {:d}'.format(value))
+    
+
 
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
