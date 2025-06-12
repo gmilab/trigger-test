@@ -206,23 +206,29 @@ class CLASGUI(QMainWindow):
         self.lbl_status.setText('Sent {:d}'.format(value))
 
     def start_10_triggers_every_2min(self):
-        """Start sending 10 triggers every 2 minutes."""
-        self.triggers_sent = 0
-        self.max_triggers = 10
-        self.trigger_2min_timer = QTimer(self)
-        self.trigger_2min_timer.timeout.connect(self.send_periodic_trigger)
-        self.trigger_2min_timer.start(2 * 60 * 1000)  # 2 minutes in ms
-        self.send_periodic_trigger()  # Send the first trigger immediately
+        """Start sending a burst of 10 triggers (1s apart) every 2 minutes."""
+        self.burst_timer = QTimer(self)
+        self.burst_timer.timeout.connect(self.start_trigger_burst)
+        self.burst_timer.start(2 * 60 * 1000)  # 2 minutes in ms
+        self.start_trigger_burst()  # Start immediately
 
-    def send_periodic_trigger(self):
-        """Send a trigger and update the count; stop after 10."""
-        if self.triggers_sent < self.max_triggers:
-            self.send_trigger(255)  # or any value you want
-            self.triggers_sent += 1
-            self.lbl_status.setText(f'Sent {self.triggers_sent}/{self.max_triggers}')
+    def start_trigger_burst(self):
+        """Start sending 10 triggers, 1s apart."""
+        self.triggers_sent_in_burst = 0
+        self.burst_trigger_timer = QTimer(self)
+        self.burst_trigger_timer.timeout.connect(self.send_burst_trigger)
+        self.burst_trigger_timer.start(1000)  # 1 second in ms
+        self.send_burst_trigger()  # Send first trigger immediately
+
+    def send_burst_trigger(self):
+        """Send one trigger in the burst, stop after 10."""
+        if self.triggers_sent_in_burst < 10:
+            self.send_trigger(255)
+            self.triggers_sent_in_burst += 1
+            self.lbl_status.setText(f'Burst: Sent {self.triggers_sent_in_burst}/10')
         else:
-            self.trigger_2min_timer.stop()
-            self.lbl_status.setText('Done sending 10 triggers.')
+            self.burst_trigger_timer.stop()
+            self.lbl_status.setText('Burst done, waiting 2 min...')
         
 
 if __name__ == "__main__":
