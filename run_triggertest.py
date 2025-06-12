@@ -237,7 +237,7 @@ class CLASGUI(QMainWindow):
                 self.burst_trigger_timer = None
             # Start countdown display for next burst
             self.burst_countdown = 110  # match your burst_timer interval in seconds
-            self.lbl_status.setText(f'Burst done, next in {self.burst_countdown}s...')
+            self.lbl_status.setText(f'Next burst: {self.burst_countdown}s...')
             self.burst_countdown_timer = QTimer(self)
             self.burst_countdown_timer.timeout.connect(self.update_burst_countdown)
             self.burst_countdown_timer.start(1000)  # update every second
