@@ -30,6 +30,7 @@ class CLASGUI(QMainWindow):
         self.btn_stop.clicked.connect(self.triggertest_stop)
         self.btn_max.clicked.connect(self.triggertest_max)
         self.btn_specific.clicked.connect(self.triggertest_sendsingle)
+        self.btn_10triggers.clicked.connect(self.start_10_triggers_every_2min)
 
         # load port config
         with open('config.yaml', 'r') as f:
@@ -114,6 +115,11 @@ class CLASGUI(QMainWindow):
         self.lbl_status.setStyleSheet(u"border: 1px #000 solid; padding: 2px;")
         MainWindow.setCentralWidget(self.centralwidget)
 
+        self.btn_10triggers = QPushButton(self.centralwidget)
+        self.btn_10triggers.setObjectName(u"btn_10triggers")
+        self.btn_10triggers.setGeometry(QRect(20, 80, 121, 23))
+        self.btn_10triggers.setText("10 triggers/2min")
+
         self.retranslateUi(MainWindow)
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -195,6 +201,26 @@ class CLASGUI(QMainWindow):
             raise(ValueError('Invalid port type'))
 
         self.lbl_status.setText('Sent {:d}'.format(value))
+
+    def start_10_triggers_every_2min(self):
+        """Start sending 10 triggers every 2 minutes."""
+        self.triggers_sent = 0
+        self.max_triggers = 10
+        self.trigger_2min_timer = QTimer(self)
+        self.trigger_2min_timer.timeout.connect(self.send_periodic_trigger)
+        self.trigger_2min_timer.start(2 * 60 * 1000)  # 2 minutes in ms
+        self.send_periodic_trigger()  # Send the first trigger immediately
+
+    def send_periodic_trigger(self):
+        """Send a trigger and update the count; stop after 10."""
+        if self.triggers_sent < self.max_triggers:
+            self.send_trigger(255)  # or any value you want
+            self.triggers_sent += 1
+            self.lbl_status.setText(f'Sent {self.triggers_sent}/{self.max_triggers}')
+        else:
+            self.trigger_2min_timer.stop()
+            self.lbl_status.setText('Done sending 10 triggers.')
+        
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)
