@@ -88,9 +88,6 @@ class CLASGUI(QMainWindow):
         ### Show figure ###
         self.show()
 
-        # start autotrigger
-        self.start_10_triggers_every_2min()
-
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
