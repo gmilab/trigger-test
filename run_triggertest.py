@@ -206,12 +206,11 @@ class CLASGUI(QMainWindow):
         self.lbl_status.setText('Sent {:d}'.format(value))
     
 
-
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
             self.burst_timer = QTimer(self)
             self.burst_timer.timeout.connect(self.start_trigger_burst)
-            self.burst_timer.start(2 * 60 * 1000)  # 2 minutes in ms
+            self.burst_timer.start(110 * 1000)  # 110 seconds in ms
         self.start_trigger_burst()  # Start first burst immediately
 
     def start_trigger_burst(self):
@@ -236,7 +235,20 @@ class CLASGUI(QMainWindow):
             if self.burst_trigger_timer is not None:
                 self.burst_trigger_timer.stop()
                 self.burst_trigger_timer = None
-            self.lbl_status.setText('Burst done, waiting 2 min...')
+            # Start countdown display for next burst
+            self.burst_countdown = 110  # match your burst_timer interval in seconds
+            self.lbl_status.setText(f'Burst done, next in {self.burst_countdown}s...')
+            self.burst_countdown_timer = QTimer(self)
+            self.burst_countdown_timer.timeout.connect(self.update_burst_countdown)
+            self.burst_countdown_timer.start(1000)  # update every second
+
+    def update_burst_countdown(self):
+        self.burst_countdown -= 1
+        if self.burst_countdown > 0:
+            self.lbl_status.setText(f'Burst done, next in {self.burst_countdown}s...')
+        else:
+            self.burst_countdown_timer.stop()
+            self.lbl_status.setText('Starting next burst soon...')
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)
