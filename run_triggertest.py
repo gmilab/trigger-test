@@ -31,7 +31,7 @@ class CLASGUI(QMainWindow):
         self.btn_stop.clicked.connect(self.triggertest_stop)
         self.btn_max.clicked.connect(self.triggertest_max)
         self.btn_specific.clicked.connect(self.triggertest_sendsingle)
-        # self.btn_10triggers.clicked.connect(self.triggertest_start)
+        self.btn_10triggers.clicked.connect(self.triggertest_start)
 
         # load port config
         with open('config.yaml', 'r') as f:
@@ -115,10 +115,10 @@ class CLASGUI(QMainWindow):
         self.lbl_status.setGeometry(QRect(306, 10, 101, 61))
         self.lbl_status.setStyleSheet(u"border: 1px #000 solid; padding: 2px;")
 
-        # self.btn_10triggers = QPushButton(self.centralwidget)
-        # self.btn_10triggers.setObjectName(u"btn_10triggers")
-        # self.btn_10triggers.setGeometry(QRect(20, 80, 121, 23))
-        # self.btn_10triggers.setText("10 triggers/2min")
+        self.btn_10triggers = QPushButton(self.centralwidget)
+        self.btn_10triggers.setObjectName(u"btn_10triggers")
+        self.btn_10triggers.setGeometry(QRect(20, 80, 121, 23))
+        self.btn_10triggers.setText("10 triggers/2min")
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -203,6 +203,37 @@ class CLASGUI(QMainWindow):
             raise(ValueError('Invalid port type'))
 
         self.lbl_status.setText('Sent {:d}'.format(value))
+
+    def start_10_triggers_every_2min(self):
+        if not hasattr(self, 'burst_timer') or self.burst_timer is None:
+            self.burst_timer = QTimer(self)
+            self.burst_timer.timeout.connect(self.start_trigger_burst)
+            self.burst_timer.start(2 * 60 * 1000)  # 2 minutes in ms
+        self.start_trigger_burst()  # Start first burst immediately
+
+    def start_trigger_burst(self):
+        """Start sending 10 triggers, 1s apart."""
+        # Stop any previous burst in progress
+        if hasattr(self, 'burst_trigger_timer') and self.burst_trigger_timer is not None:
+            self.burst_trigger_timer.stop()
+            self.burst_trigger_timer = None
+        self.triggers_sent_in_burst = 0
+        self.burst_trigger_timer = QTimer(self)
+        self.burst_trigger_timer.timeout.connect(self.send_burst_trigger)
+        self.burst_trigger_timer.start(1000)  # 1 second in ms
+        self.send_burst_trigger()  # Send first trigger immediately
+
+    def send_burst_trigger(self):
+        """Send one trigger in the burst, stop after 10."""
+        if self.triggers_sent_in_burst < 10:
+            self.send_trigger(255)  # Or any value you want
+            self.triggers_sent_in_burst += 1
+            self.lbl_status.setText(f'Burst: Sent {self.triggers_sent_in_burst}/10')
+        else:
+            if self.burst_trigger_timer is not None:
+                self.burst_trigger_timer.stop()
+                self.burst_trigger_timer = None
+            self.lbl_status.setText('Burst done, waiting 2 min...')
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)
