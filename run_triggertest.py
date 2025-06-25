@@ -237,7 +237,7 @@ class CLASGUI(QMainWindow):
         self.continuous_trigger_count += 1
         self.send_trigger(1)
         # Override the status message from send_trigger to show continuous status
-        self.lbl_status.setText(f'Continuous: {self.continuous_trigger_count} sent')
+        self.lbl_status.setText(f'Continuous:{self.continuous_trigger_count} sent')
 
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
