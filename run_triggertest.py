@@ -223,12 +223,13 @@ class CLASGUI(QMainWindow):
         if not hasattr(self, 'trigger_timer') or self.trigger_timer is None:
             self.trigger_timer = QTimer(self)
             self.trigger_timer.timeout.connect(self.send_continuous_trigger)
+            self.lbl_status.setText(f'Waiting')
             self.trigger_timer.start(1000)
     
     def send_continuous_trigger(self):
         """Send a trigger every second."""
         self.send_trigger(1)
-        self.lbl_status.setText('Sent continuous trigger')
+        self.lbl_status.setText('Sent trigger')
 
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
