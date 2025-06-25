@@ -125,7 +125,7 @@ class CLASGUI(QMainWindow):
 
         self.btn_continuous = QPushButton(self.centralwidget)
         self.btn_continuous.setObjectName(u"btn_continuous")
-        self.btn_continuous.setGeometry(QRect(20, 40, 121, 23))
+        self.btn_continuous.setGeometry(QRect(150, 41, 121, 23))
         self.btn_continuous.setText("Continuous triggers")
 
         MainWindow.setCentralWidget(self.centralwidget)
