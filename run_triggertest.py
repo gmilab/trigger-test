@@ -223,13 +223,21 @@ class CLASGUI(QMainWindow):
         if not hasattr(self, 'trigger_timer') or self.trigger_timer is None:
             self.trigger_timer = QTimer(self)
             self.trigger_timer.timeout.connect(self.send_continuous_trigger)
-            self.lbl_status.setText(f'Waiting')
+            self.continuous_trigger_count = 0  # Initialize counter
+            self.lbl_status.setText('Starting continuous...')
             self.trigger_timer.start(1000)
+        else:
+            # Stop if already running
+            self.trigger_timer.stop()
+            self.trigger_timer = None
+            self.lbl_status.setText('Stopped continuous')
     
     def send_continuous_trigger(self):
         """Send a trigger every second."""
+        self.continuous_trigger_count += 1
         self.send_trigger(1)
-        self.lbl_status.setText('Sent trigger')
+        # Override the status message from send_trigger to show continuous status
+        self.lbl_status.setText(f'Continuous: {self.continuous_trigger_count} sent')
 
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
