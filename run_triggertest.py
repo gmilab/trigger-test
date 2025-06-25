@@ -218,7 +218,7 @@ class CLASGUI(QMainWindow):
 
         self.lbl_status.setText('Sent {:d}'.format(value))
     
-    def continous_triggers(self):
+    def continuous_triggers(self):
         """Start sending triggers continuously every second."""
         if not hasattr(self, 'trigger_timer') or self.trigger_timer is None:
             self.trigger_timer = QTimer(self)
