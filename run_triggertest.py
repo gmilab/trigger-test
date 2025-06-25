@@ -19,6 +19,7 @@ class CLASGUI(QMainWindow):
     triggertest_state = 0
     burst_timer = None
     burst_trigger_timer = None
+    trigger_timer = None
 
     def __init__(self):
         super().__init__()
@@ -33,6 +34,7 @@ class CLASGUI(QMainWindow):
         self.btn_max.clicked.connect(self.triggertest_max)
         self.btn_specific.clicked.connect(self.triggertest_sendsingle)
         self.btn_10triggers.clicked.connect(self.start_10_triggers_every_2min)
+        self.btn_continuous.clicked.connect(self.continuous_triggers)
 
         # load port config
         with open('config.yaml', 'r') as f:
@@ -121,6 +123,11 @@ class CLASGUI(QMainWindow):
         self.btn_10triggers.setGeometry(QRect(20, 80, 121, 23))
         self.btn_10triggers.setText("10 triggers/2mins")
 
+        self.btn_continuous = QPushButton(self.centralwidget)
+        self.btn_continuous.setObjectName(u"btn_continuous")
+        self.btn_continuous.setGeometry(QRect(20, 40, 121, 23))
+        self.btn_continuous.setText("Continuous triggers")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -143,6 +150,12 @@ class CLASGUI(QMainWindow):
         if self.triggertest_timer is not None:
             self.triggertest_timer.stop()
             self.triggertest_timer = None
+        
+        # stop continuous triggers if running
+        if hasattr(self, 'trigger_timer') and self.trigger_timer is not None:
+            self.trigger_timer.stop()
+            self.trigger_timer = None
+        self.lbl_status.setText('Stopped continuous triggers')
 
         # reset trigger test state variable
         self.triggertest_reset()
@@ -205,13 +218,24 @@ class CLASGUI(QMainWindow):
 
         self.lbl_status.setText('Sent {:d}'.format(value))
     
+    def continous_triggers(self):
+        """Start sending triggers continuously every second."""
+        if not hasattr(self, 'trigger_timer') or self.trigger_timer is None:
+            self.trigger_timer = QTimer(self)
+            self.trigger_timer.timeout.connect(self.send_continuous_trigger)
+            self.trigger_timer.start(1000)
+    
+    def send_continuous_trigger(self):
+        """Send a trigger every second."""
+        self.send_trigger(1)
+        self.lbl_status.setText('Sent continuous trigger')
 
     def start_10_triggers_every_2min(self):
         if not hasattr(self, 'burst_timer') or self.burst_timer is None:
             self.burst_timer = QTimer(self)
             self.burst_timer.timeout.connect(self.start_trigger_burst)
             self.burst_timer.start(120 * 1000)  # 110 seconds in ms
-        self.start_trigger_burst()  # Start first burst immediately
+            self.start_trigger_burst()  # Start first burst immediately
 
     def start_trigger_burst(self):
         """Start sending 10 triggers, 1s apart."""
@@ -249,6 +273,7 @@ class CLASGUI(QMainWindow):
         else:
             self.burst_countdown_timer.stop()
             self.lbl_status.setText('Starting next burst soon...')
+
 
 if __name__ == "__main__":
     App = QApplication(sys.argv)
